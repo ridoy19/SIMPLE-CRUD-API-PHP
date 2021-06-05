@@ -5,16 +5,13 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header("Access-Control-Allow-Headers: Access-Control-Allow-Methods, Content_Type, Access-Control-Allow-Methods, X-Requested-With, Authorization");
 
-$js_name = json_decode(file_get_contents("php://input"), true);
-$js_email = json_decode(file_get_contents("php://input"), true);
-$js_age = json_decode(file_get_contents("php://input"), true);
-$js_designation = json_decode(file_get_contents("php://input"), true);
+$json_data = json_decode(file_get_contents("php://input"), true);
 
 
-$name = $js_name["name"];
-$email = $js_email["email"];
-$age = $js_age["age"];
-$designation = $js_designation["designation"];
+$name = $json_data["name"];
+$email = $json_data["email"];
+$age = $json_data["age"];
+$designation = $json_data["designation"];
 
 
 require_once("../db/config.php");

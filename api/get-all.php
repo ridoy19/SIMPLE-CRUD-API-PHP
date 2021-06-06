@@ -6,20 +6,29 @@ header('Access-Control-Allow-Methods: GET');
 header("Access-Control-Allow-Headers: Access-Control-Allow-Methods, Content_Type, Access-Control-Allow-Methods, X-Requested-With, Authorization");
 
 require_once('../db/config.php');
+require_once('../auth.php');
 
+$isAuthenticated = isAuth();
 
-$sql = 'SELECT * FROM employee';
-$result = mysqli_query($connection, $sql);
+if ($isAuthenticated) {
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_all($result, MYSQLI_ASSOC)) {
-            echo json_encode(array("message" => "Success", "data" => $row));
+    $sql = 'SELECT * FROM employee';
+    $result = mysqli_query($connection, $sql);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_all($result, MYSQLI_ASSOC)) {
+                echo json_encode(array("message" => "Success", "data" => $row));
+            }
+        }else {
+            echo json_encode(array('message' => "Not found!", "data" => []));
         }
     }else {
-        echo json_encode(array('message' => "Not found!", "data" => []));
+        echo json_encode(array('message' => $_SERVER['REQUEST_METHOD']. " method not supported!"));
     }
 }else {
-    echo json_encode(array('message' => $_SERVER['REQUEST_METHOD']. " method not supported!"));
+    echo json_encode(array('message' => "Authentication failed!"));
 }
+
+
 

@@ -15,32 +15,40 @@ $designation = $json_data["designation"];
 
 
 require_once("../db/config.php");
+require_once('../auth.php');
 
-$records = "SELECT * FROM employee WHERE email = '$email'";
-$result = mysqli_query($connection, $records);
+$isAuthenticated = isAuth();
 
-if (mysqli_num_rows($result) > 0) {
-    echo json_encode(array('message' => "Email already in use!"));
-}else {
 
-    if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        if (!isset($name) || !isset($email) || !isset($age)  || !isset($designation)) {
-            echo json_encode(array('message' => "All fields are required!"));
-        }else {
-            $sql = "INSERT INTO employee (name, email, age, designation) VALUES('$name', '$email', '$age', '$designation')";
-            
-            if (mysqli_query($connection, $sql)) {
-                echo json_encode(array("message" => "Employee inserted successfully!", "data" => json_encode(mysqli_insert_id($connection))));
+if ($isAuthenticated) {
+    $records = "SELECT * FROM employee WHERE email = '$email'";
+    $result = mysqli_query($connection, $records);
+
+    if (mysqli_num_rows($result) > 0) {
+        echo json_encode(array('message' => "Email already in use!"));
+    }else {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            if (!isset($name) || !isset($email) || !isset($age)  || !isset($designation)) {
+                echo json_encode(array('message' => "All fields are required!"));
             }else {
-                echo json_encode(array('message' => "Something went wrong!"));
+                $sql = "INSERT INTO employee (name, email, age, designation) VALUES('$name', '$email', '$age', '$designation')";
+                
+                if (mysqli_query($connection, $sql)) {
+                    echo json_encode(array("message" => "Employee inserted successfully!", "data" => json_encode(mysqli_insert_id($connection))));
+                }else {
+                    echo json_encode(array('message' => "Something went wrong!"));
+                }
+                
             }
             
+        }else {
+            echo json_encode(array('message' => $_SERVER['REQUEST_METHOD']. " method not supported!"));
         }
         
-    }else {
-        echo json_encode(array('message' => $_SERVER['REQUEST_METHOD']. " method not supported!"));
     }
-    
+}else {
+    echo json_encode(array('message' => "Authentication failed!"));
 }
+
 
 

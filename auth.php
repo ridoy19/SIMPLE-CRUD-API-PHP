@@ -8,6 +8,8 @@ function isAuth() {
             return false;
         }
     }else {
+        header('WWW-Authenticate: Basic realm="My Realm"');
+        header('HTTP/1.0 401 Unauthorized');
         echo json_encode(array("message" => "Username and Password is required!"));exit;
     }
 }

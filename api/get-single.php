@@ -33,6 +33,8 @@ if ($isAuthenticated) {
         echo json_encode(array('message' => $_SERVER['REQUEST_METHOD']. " method not supported!"));
     }
 }else {
+    header('WWW-Authenticate: Basic realm="My Realm"');
+    header('HTTP/1.0 401 Unauthorized');
     echo json_encode(array('message' => "Authentication failed!"));
 }
 
